@@ -12,11 +12,13 @@ public class MoneyTracker : MonoBehaviour
     private void OnEnable()
     {
         InputHandler.OnMakeMoney += IncrementMoney;
+        MoneyDecayManager.OnMoneyDecay += SubtractMoney;
     }
 
     private void OnDisable()
     {
         InputHandler.OnMakeMoney -= IncrementMoney;
+        MoneyDecayManager.OnMoneyDecay -= SubtractMoney;
     }
 
     void IncrementMoney()
@@ -27,6 +29,12 @@ public class MoneyTracker : MonoBehaviour
     void AddMoney(int money)
     {
         Money += money;
+        OnMoneyChanged?.Invoke(Money);
+    }
+
+    void SubtractMoney(int money)
+    {
+        Money -= money;
         OnMoneyChanged?.Invoke(Money);
     }
 }

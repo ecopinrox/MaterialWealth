@@ -671,6 +671,7 @@ GameObject:
   - component: {fileID: 2131659022}
   - component: {fileID: 2131659023}
   - component: {fileID: 2131659024}
+  - component: {fileID: 2131659025}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -761,6 +762,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   moneyText: {fileID: 993550395}
+--- !u!114 &2131659025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131659019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb992605dde236f439760d415f20d419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoneyDecayManager
+  decayInterval: 1
+  decayAmount: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
