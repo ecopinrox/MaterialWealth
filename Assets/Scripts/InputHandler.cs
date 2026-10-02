@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,8 @@ public class InputHandler : MonoBehaviour
     PlayerInput playerInput;
 
     InputAction makeMoneyAction;
+
+    public static event Action OnMakeMoney;
 
     private void Awake()
     {
@@ -26,6 +29,6 @@ public class InputHandler : MonoBehaviour
 
     void ProcessMakeMoney(InputAction.CallbackContext _)
     {
-        Debug.Log("Money made");
+        OnMakeMoney?.Invoke();
     }
 }
