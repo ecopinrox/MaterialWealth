@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,6 +6,8 @@ using UnityEngine.InputSystem;
 public class MoneyTracker : MonoBehaviour
 {
     public BigInteger Money { get; private set; } = 0;
+
+    public static event Action<BigInteger> OnMoneyChanged;
 
     private void OnEnable()
     {
@@ -24,6 +27,6 @@ public class MoneyTracker : MonoBehaviour
     void AddMoney(int money)
     {
         Money += money;
-        Debug.Log("Money = " + Money);
+        OnMoneyChanged?.Invoke(Money);
     }
 }
