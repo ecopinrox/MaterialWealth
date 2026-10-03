@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "StructureDataSO", menuName = "Scriptable Objects/StructureDataSO")]
 public class StructureDataSO : ScriptableObject
 {
+    public string structureName;
     public float[] sectionThresholdArray;
     public int[] moneyGainArray;
     public float moneyGainInterval = 3f;

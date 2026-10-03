@@ -1,8 +1,10 @@
 using UnityEngine;
 using System;
+using UnityEngine.Rendering;
 
 public class Structure
 {
+    public readonly string name;
     public readonly float[] sectionThresholdArray;
     public readonly int[] moneyGainArray;
     public readonly float moneyGainInterval;
@@ -11,15 +13,17 @@ public class Structure
     public readonly float investmentLifeBoostFraction;
 
     float currentLife;
+    float timeTillMoneyGain;
 
-    public float TimeTillMoneyGain { get; private set; }
-    float LifeFraction { get { return currentLife / lifetime; } }
+    public float LifeFraction { get { return currentLife / lifetime; } }
+    public float MoneyGainIntervalFraction { get { return timeTillMoneyGain / moneyGainInterval; } } 
 
     public event Action<int> OnMoneyGained;
     public event Action<float> OnLifetimeChanged;
 
     public Structure(StructureDataSO structureDataSO)
     {
+        name = structureDataSO.structureName;
         sectionThresholdArray = structureDataSO.sectionThresholdArray;
         moneyGainArray = structureDataSO.moneyGainArray;
         moneyGainInterval = structureDataSO.moneyGainInterval;
@@ -60,10 +64,10 @@ public class Structure
 
     void TickMoney(float deltaTime)
     {
-        TimeTillMoneyGain -= deltaTime;
-        if(TimeTillMoneyGain <= 0)
+        timeTillMoneyGain -= deltaTime;
+        if(timeTillMoneyGain <= 0)
         {
-            TimeTillMoneyGain = moneyGainInterval;
+            timeTillMoneyGain = moneyGainInterval;
 
             int section = GetCurrentSection();
             int gain = (section < 0) ? 0 : moneyGainArray[section];
@@ -72,7 +76,7 @@ public class Structure
         }
     }
 
-    int GetCurrentSection()
+    public int GetCurrentSection()
     {
         int section;
         for(section = 0; section < sectionThresholdArray.Length; section++)
@@ -81,6 +85,13 @@ public class Structure
         }
 
         return section - 1;
+    }
+
+    public int GetMoneyGain()
+    {
+        int section = GetCurrentSection();
+        if (section < 0) return 0;
+        return moneyGainArray[section];
     }
 }
 

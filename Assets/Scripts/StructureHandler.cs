@@ -8,22 +8,14 @@ public class StructureHandler : MonoBehaviour
     public Structure[] structures;
 
     public static event Action<int> OnMoneyGained;
-    public static event Action<int, float> OnStructureLifetimeUpdated;
+    public static event Action<Structure[]> OnStructuresCreated;
+    public static event Action OnStructuresTicked;
 
     MoneyTracker moneyTracker;
 
     private void Awake()
     {
         moneyTracker = GetComponent<MoneyTracker>();
-
-        structures = new Structure[structureTypes.Length];
-        for (int i = 0; i < structures.Length; i++)
-        {
-            structures[i] = new(structureTypes[i]);
-
-            structures[i].OnMoneyGained += RegisterMoneyGained;
-            structures[i].OnLifetimeChanged += (lifetime) => UpdateStructureLifetime(i, lifetime);
-        }
     }
 
     private void OnEnable()
@@ -36,12 +28,28 @@ public class StructureHandler : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        structures = new Structure[structureTypes.Length];
+        for (int i = 0; i < structures.Length; i++)
+        {
+            structures[i] = new(structureTypes[i]);
+
+            structures[i].OnMoneyGained += RegisterMoneyGained;
+            structures[i].OnLifetimeChanged += (lifetime) => UpdateStructureLifetime(i, lifetime);
+        }
+
+        OnStructuresCreated(structures);
+    }
+
     private void Update()
     {
         foreach(Structure structure in structures)
         {
             structure.Tick(Time.deltaTime);
         }
+
+        OnStructuresTicked?.Invoke();
     }
 
     public void TryInvestInStructure(int structureIndex)
@@ -64,7 +72,6 @@ public class StructureHandler : MonoBehaviour
 
     public void UpdateStructureLifetime(int index, float lifetime)
     {
-        Debug.Log($"Structure {index} lifetime fraction is {lifetime}");
-        OnStructureLifetimeUpdated?.Invoke(index, lifetime);
+
     }
 }
