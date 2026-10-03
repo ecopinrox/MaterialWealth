@@ -12,3 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af722a77580b4645bae8297fc1d4ed9, type: 3}
   m_Name: TestStructure
   m_EditorClassIdentifier: Assembly-CSharp::StructureDataSO
+  sectionThresholdArray:
+  - 0.2
+  - 0.4
+  - 0.6
+  - 0.8
+  moneyGainArray: 050000000a0000000f00000014000000
+  moneyGainInterval: 3
+  lifetime: 10
+  investmentCost: 1
+  investmentLifeBoost: 0.2

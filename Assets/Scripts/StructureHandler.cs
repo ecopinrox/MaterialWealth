@@ -4,47 +4,67 @@ using UnityEngine;
 
 public class StructureHandler : MonoBehaviour
 {
-    public List<Structure> activeStructures = new();
+    [SerializeField] StructureDataSO[] structureTypes;
+    public Structure[] structures;
 
     public static event Action<int> OnMoneyGained;
+    public static event Action<int, float> OnStructureLifetimeUpdated;
+
+    MoneyTracker moneyTracker;
+
+    private void Awake()
+    {
+        moneyTracker = GetComponent<MoneyTracker>();
+
+        structures = new Structure[structureTypes.Length];
+        for (int i = 0; i < structures.Length; i++)
+        {
+            structures[i] = new(structureTypes[i]);
+
+            structures[i].OnMoneyGained += RegisterMoneyGained;
+            structures[i].OnLifetimeChanged += (lifetime) => UpdateStructureLifetime(i, lifetime);
+        }
+    }
 
     private void OnEnable()
     {
-        MoneyTracker.OnStructureBought += AddStructure;
+
     }
 
     private void OnDisable()
     {
-        MoneyTracker.OnStructureBought -= AddStructure;
+
     }
 
     private void Update()
     {
-        for(int i = 0; i < activeStructures.Count; i++)
+        foreach(Structure structure in structures)
         {
-                activeStructures[i].Tick(Time.deltaTime);
+            structure.Tick(Time.deltaTime);
         }
     }
 
-    void AddStructure(StructureDataSO structureData)
+    public void TryInvestInStructure(int structureIndex)
     {
-        Structure newStructure = new(structureData);
+        Structure structure = structures[structureIndex];
 
-        newStructure.OnDestroyed += RemoveStructure;
-        newStructure.OnMoneyGained += RegisterMoneyGained;
+        if(!moneyTracker.TrySubtractMoney(structure.investmentCost))
+        {
+            return;
+        }
 
-        activeStructures.Add(newStructure);
-    }
-
-    public void RemoveStructure(Structure structure) 
-    {
-        Debug.Log($"Removing structure");
-        activeStructures.Remove(structure);
+        structure.Invest();
     }
 
     public void RegisterMoneyGained(int money)
     {
         Debug.Log($"Earned {money} from structure");
         OnMoneyGained?.Invoke(money);
+    }
+
+    public void UpdateStructureLifetime(int index, float lifetime)
+    {
+        Debug.Log($"Structure {index} lifetime fraction is {lifetime}");
+        OnStructureLifetimeUpdated?.Invoke(index, lifetime);
     }
 }

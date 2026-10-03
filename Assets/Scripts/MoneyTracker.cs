@@ -1,14 +1,12 @@
 using System;
 using System.Numerics;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class MoneyTracker : MonoBehaviour
 {
     public BigInteger Money { get; private set; } = 0;
 
     public static event Action<BigInteger> OnMoneyChanged;
-    public static event Action<StructureDataSO> OnStructureBought;
 
     private void OnEnable()
     {
@@ -22,18 +20,6 @@ public class MoneyTracker : MonoBehaviour
         InputHandler.OnMakeMoney -= IncrementMoney;
         MoneyDecayManager.OnMoneyDecay -= SubtractMoney;
         StructureHandler.OnMoneyGained -= AddMoney;
-    }
-
-    public void BuyStructure(StructureDataSO structureData)
-    {
-        if(Money < structureData.cost)
-        {
-            return;
-        }
-
-        Debug.Log("Bought structure");
-        SubtractMoney(structureData.cost);
-        OnStructureBought(structureData);
     }
 
     void IncrementMoney()
@@ -51,5 +37,16 @@ public class MoneyTracker : MonoBehaviour
     {
         Money -= money;
         OnMoneyChanged?.Invoke(Money);
+    }
+
+    public bool TrySubtractMoney(int money)
+    {
+        if(Money < money)
+        {
+            return false;
+        }
+
+        SubtractMoney(money);
+        return true;
     }
 }
